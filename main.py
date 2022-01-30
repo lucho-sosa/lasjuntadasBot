@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from unittest import case
 from telegram.ext import (Updater, CommandHandler)
-from var import (TKN)
+from scrt.var import (TKN)
 
 
 """
