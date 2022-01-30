@@ -1,32 +1,39 @@
 # -*- coding: utf-8 -*-
 
+from tokenize import group
 from telegram.ext import (Updater, CommandHandler)
 from scrt.var import (TKN)
-
+from collections import defaultdict
+"""
+    El codigo con maps no es performante por lo que no es una buena idea hacer publico el bot 
+    pero actualmente funciona 
+"""
 
 """
         al agregarte en cualquier chat o grupo sos cargado en una 
         unica variable que es la peopleForMeet.
 """
-# TODO: ver como hacer varios hilos 
+# TODO: generar las diferentes variables con maps 
+    # TODO: estudiar maps en python
 # TODO: crear argumento para poder especificar día de la peña
 
 # Variables
 peopleForTheMeet = []
+groups = defaultdict(list)
 
 def start(update, context):
     ''' START '''
     # Enviar un mensaje a un ID determinado.
     context.bot.send_message(update.message.chat_id, "Bienvenido")
+    groups[update.message.chat_id] = []
 
 def addme(update, context):
-   
     contact = update.message.from_user.username
-    for person in peopleForTheMeet:
-        if contact == person:
+    for isPerson in peopleForTheMeet:
+        if contact == isPerson:
             context.bot.send_message(update.message.chat_id, "Ya fuiste agregado") 
             return
-    peopleForTheMeet.append(contact)
+    groups[update.message.chat_id].append(contact) 
     context.bot.send_message(update.message.chat_id, "Ahí te agrego, rey")
 
 
@@ -42,7 +49,7 @@ def rmme(update, context):
 
 
 def acc(update, context):
-    comentario = str(len(peopleForTheMeet)) + " "
+    comentario = str(len(groups[update.message.chat_id])) + " "
     num = len(peopleForTheMeet)
     if num == 0:
         comentario+= "(JAJAJAJJA)"
@@ -61,15 +68,16 @@ def acc(update, context):
 
 
 def listOfPeople(update, context):
-    num = len(peopleForTheMeet)
+    num = len(groups[update.message.chat_id])
     if num == 0:
         context.bot.send_message(update.message.chat_id, "no va nadie")
         return   
     listOfPeopleDetails = "Los que van a la peña son:\n"
     person = ""
-    for person in peopleForTheMeet:
+    for person in groups[update.message.chat_id]:
         listOfPeopleDetails += person+"\n"
     context.bot.send_message(update.message.chat_id, listOfPeopleDetails)
+    return listOfPeopleDetails
 
 
 def main():
